@@ -11,18 +11,18 @@ class Direction(Enum):
     UP = 90
     LEFT = 180
     NONE = 360
-
+#движение
 
 class ScoreType(Enum):
     COOKIE = 10
     POWERUP = 50
     GHOST = 400
-
+#счетчик очков
 
 class GhostBehaviour(Enum):
     CHASE = 1
     SCATTER = 2
-
+#поведение
 
 def translate_screen_to_maze(in_coords, in_size=32):
     return int(in_coords[0] / in_size), int(in_coords[1] / in_size)
@@ -45,6 +45,7 @@ class GameObject:
         self._circle = is_circle
         self._shape = pygame.Rect(self.x, self.y, in_size, in_size)
 
+    #общий класс
     def draw(self):
         if self._circle:
             pygame.draw.circle(self._surface,
@@ -78,12 +79,12 @@ class GameObject:
 
     def get_position(self):
         return (self.x, self.y)
-
+#
 
 class Wall(GameObject):
     def __init__(self, in_surface, x, y, in_size: int, in_color=(0, 0, 255)):
         super().__init__(in_surface, x * in_size, y * in_size, in_size, in_color)
-
+#стены
 
 class GameRenderer:
     def __init__(self, in_width: int, in_height: int):
@@ -119,6 +120,7 @@ class GameRenderer:
         ]
         self._current_phase = 0
 
+    #отобрадение информации
     def tick(self, in_fps: int):
         black = (0, 0, 0)
 
@@ -275,6 +277,7 @@ class MovableObject(GameObject):
         self.next_target = None
         self.image = pygame.image.load('images/ghost.png')
 
+    #двидение ппредметов
     def get_next_location(self):
         return None if len(self.location_queue) == 0 else self.location_queue.pop(0)
 
@@ -329,6 +332,7 @@ class Hero(MovableObject):
         self.image = self.open
         self.mouth_open = True
 
+    #главный пресонаж
     def tick(self):
         # TELEPORT
         if self.x < 0:
@@ -417,6 +421,7 @@ class Ghost(MovableObject):
         self.sprite_normal = pygame.image.load(sprite_path)
         self.sprite_fright = pygame.image.load("images/ghost_fright.png")
 
+    #приведение
     def reached_target(self):
         if (self.x, self.y) == self.next_target:
             self.next_target = self.get_next_location()
@@ -467,6 +472,7 @@ class Ghost(MovableObject):
         elif in_direction == Direction.RIGHT:
             self.set_position(self.x + 1, self.y)
 
+    # автоматическое движение
     def draw(self):
         self.image = self.sprite_fright if self._renderer.is_kokoro_active() else self.sprite_normal
         super(Ghost, self).draw()
@@ -480,7 +486,7 @@ class Cookie(GameObject):
 class Powerup(GameObject):
     def __init__(self, in_surface, x, y):
         super().__init__(in_surface, x, y, 8, (255, 255, 255), True)
-
+#суперсила
 
 class Pathfinder:
     def __init__(self, in_arr):
@@ -490,21 +496,18 @@ class Pathfinder:
     def get_path(self, from_x, from_y, to_x, to_y) -> object:
         res = self.pf.get_path(from_x, from_y, to_x, to_y)
         return [(sub[1], sub[0]) for sub in res]
-
+#поиск пути
 
 class PacmanGameController:
     def __init__(self):
         self.ascii_maze = [
             "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
             "XP           XX            X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
             "X XXXXOXXXXX XX XXXXXOXXXX X",
             "X XXXX XXXXX XX XXXXX XXXX X",
             "X                          X",
-            "X XXXX XX XXXXXXXX XX XXXX X",
-            "X XXXX XX XXXXXXXX XX XXXX X",
+            "X XXXX   XXXXXXXX XX  XXXX X",
             "X      XX    XX    XX      X",
-            "XXXXXX XXXXX XX XXXXX XXXXXX",
             "XXXXXX XXXXX XX XXXXX XXXXXX",
             "XXXXXX XX     G    XX XXXXXX",
             "XXXXXX XX XXX  XXX XX XXXXXX",
@@ -513,7 +516,7 @@ class PacmanGameController:
             "XXXXXX XX X      X XX XXXXXX",
             "XXXXXX XX XXXXXXXX XX XXXXXX",
             "XXXXXX XX    G     XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
+
             "XXXXXX XX XXXXXXXX XX XXXXXX",
             "X            XX            X",
             "X XXXX XXXXX XX XXXXX XXXX X",
@@ -523,11 +526,10 @@ class PacmanGameController:
             "XXX XX XX XXXXXXXX XX XX XXX",
             "X      XX    XX    XX      X",
             "X XXXXXXXXXX XX XXXXXXXXXX X",
-            "X XXXXXXXXXX XX XXXXXXXXXX X",
             "X   O                 O    X",
             "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         ]
-
+        #контролирование вызода за карту
         self.numpy_maze = []
         self.cookie_spaces = []
         self.powerup_spaces = []
