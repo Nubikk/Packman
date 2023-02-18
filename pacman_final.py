@@ -62,6 +62,14 @@ class GameObject:
         pass
 
     def get_shape(self):
+        """
+        Метод возвращает объект класса Rect()
+        Метод необходим для создания базового объекта типа прямоугольник
+        Используеться для создания стен
+        :args: NONE
+        :return: pygame.Rect()
+
+        """
         return pygame.Rect(self.x, self.y, self._size, self._size)
 
     def set_position(self, in_x, in_y):
